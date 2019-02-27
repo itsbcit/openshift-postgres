@@ -1,5 +1,5 @@
---- docker-entrypoint.sh.orig	2019-02-21 14:51:56.000000000 -0800
-+++ docker-entrypoint.sh	2019-02-21 13:55:11.000000000 -0800
+--- docker-entrypoint.sh.orig	2019-02-27 10:57:08.000000000 -0800
++++ docker-entrypoint.sh	2019-02-27 10:58:51.000000000 -0800
 @@ -24,6 +24,10 @@
  	unset "$fileVar"
  }
@@ -11,33 +11,3 @@
  if [ "${1:0:1}" = '-' ]; then
  	set -- postgres "$@"
  fi
-@@ -39,13 +43,13 @@
- 	chmod 775 /var/run/postgresql
- 
- 	# Create the transaction log directory before initdb is run (below) so the directory is owned by the correct user
--	if [ "$POSTGRES_INITDB_WALDIR" ]; then
--		mkdir -p "$POSTGRES_INITDB_WALDIR"
--		chown -R postgres "$POSTGRES_INITDB_WALDIR"
--		chmod 700 "$POSTGRES_INITDB_WALDIR"
-+	if [ "$POSTGRES_INITDB_XLOGDIR" ]; then
-+		mkdir -p "$POSTGRES_INITDB_XLOGDIR"
-+		chown -R postgres "$POSTGRES_INITDB_XLOGDIR"
-+		chmod 700 "$POSTGRES_INITDB_XLOGDIR"
- 	fi
- 
--	exec gosu postgres "$BASH_SOURCE" "$@"
-+	exec su-exec postgres "$BASH_SOURCE" "$@"
- fi
- 
- if [ "$1" = 'postgres' ]; then
-@@ -69,8 +73,8 @@
- 		file_env 'POSTGRES_PASSWORD'
- 
- 		file_env 'POSTGRES_INITDB_ARGS'
--		if [ "$POSTGRES_INITDB_WALDIR" ]; then
--			export POSTGRES_INITDB_ARGS="$POSTGRES_INITDB_ARGS --waldir $POSTGRES_INITDB_WALDIR"
-+		if [ "$POSTGRES_INITDB_XLOGDIR" ]; then
-+			export POSTGRES_INITDB_ARGS="$POSTGRES_INITDB_ARGS --xlogdir $POSTGRES_INITDB_XLOGDIR"
- 		fi
- 		eval 'initdb --username="$POSTGRES_USER" --pwfile=<(echo "$POSTGRES_PASSWORD") '"$POSTGRES_INITDB_ARGS"
- 
