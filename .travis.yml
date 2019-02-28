@@ -3,20 +3,20 @@ services: docker
 
 env:
   - VERSION=11
-  - VERSION=11 FORCE_DEB_BUILD=1
-  - VERSION=11 VARIANT=alpine
-  - VERSION=10
-  - VERSION=10 FORCE_DEB_BUILD=1
-  - VERSION=10 VARIANT=alpine
-  - VERSION=9.6
-  - VERSION=9.6 FORCE_DEB_BUILD=1
-  - VERSION=9.6 VARIANT=alpine
-  - VERSION=9.5
-  - VERSION=9.5 FORCE_DEB_BUILD=1
-  - VERSION=9.5 VARIANT=alpine
-  - VERSION=9.4
-  - VERSION=9.4 FORCE_DEB_BUILD=1
-  - VERSION=9.4 VARIANT=alpine
+  #- VERSION=11 FORCE_DEB_BUILD=1
+  #- VERSION=11 VARIANT=alpine
+  #- VERSION=10
+  #- VERSION=10 FORCE_DEB_BUILD=1
+  #- VERSION=10 VARIANT=alpine
+  #- VERSION=9.6
+  #- VERSION=9.6 FORCE_DEB_BUILD=1
+  #- VERSION=9.6 VARIANT=alpine
+  #- VERSION=9.5
+  #- VERSION=9.5 FORCE_DEB_BUILD=1
+  #- VERSION=9.5 VARIANT=alpine
+  #- VERSION=9.4
+  #- VERSION=9.4 FORCE_DEB_BUILD=1
+  #- VERSION=9.4 VARIANT=alpine
 
 install:
   - git clone https://github.com/docker-library/official-images.git ~/official-images
