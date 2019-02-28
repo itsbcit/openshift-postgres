@@ -6,7 +6,8 @@ ENV HOME /postgresql
 ENV PGDATA /postgresql/data
 
 RUN apk add --no-cache \
-        tini
+        tini \
+        patch
 
 # Add docker-entrypoint script base
 ENV DE_VERSION v1.1

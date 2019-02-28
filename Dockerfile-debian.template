@@ -5,6 +5,12 @@ ENV RUNUSER postgres
 ENV HOME /postgresql
 ENV PGDATA /postgresql/data
 
+# Add patch
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends \
+    patch \
+ && rm -rf /var/lib/apt/lists/*
+
 # Add Tini
 ENV TINI_VERSION v0.18.0
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /sbin/tini
