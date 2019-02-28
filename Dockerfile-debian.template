@@ -31,4 +31,4 @@ VOLUME /postgresql
 
 RUN userdel postgres
 
-ENTRYPOINT ["/sbin/tini", "--", "/docker-entrypoint.sh"]
+ENTRYPOINT ["/sbin/tini", "--", "/usr/local/bin/docker-entrypoint.sh"]
