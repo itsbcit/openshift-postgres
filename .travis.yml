@@ -39,7 +39,7 @@ script:
         ! grep -qE 'amd64[|]' Dockerfile
       fi
       docker build -t "$image" .
-      ~/official-images/test/run.sh --user 1000000 "$image"
+      ~/official-images/test/run.sh "$image"
     )
 
 after_script:
