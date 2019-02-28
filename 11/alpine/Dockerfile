@@ -5,6 +5,8 @@ ENV RUNUSER postgres
 ENV HOME /postgresql
 ENV PGDATA /postgresql/data
 
+CMD postgres
+
 RUN apk add --no-cache \
         tini \
         patch

@@ -6,7 +6,6 @@ ENV HOME /postgresql
 ENV PGDATA /postgresql/data
 
 RUN apk add --no-cache \
-        tini \
         patch
 
 # Add docker-entrypoint script base
@@ -29,5 +28,3 @@ RUN mkdir /postgresql \
 VOLUME /postgresql
 
 RUN deluser postgres
-
-ENTRYPOINT ["/sbin/tini", "--", "/usr/local/bin/docker-entrypoint.sh"]

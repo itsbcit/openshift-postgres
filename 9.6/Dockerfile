@@ -11,11 +11,6 @@ RUN apt-get update \
     patch \
  && rm -rf /var/lib/apt/lists/*
 
-# Add Tini
-ENV TINI_VERSION v0.18.0
-ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /sbin/tini
-RUN chmod +x /sbin/tini
-
 # Add docker-entrypoint script base
 ENV DE_VERSION v1.1
 ADD https://github.com/itsbcit/docker-entrypoint/releases/download/${DE_VERSION}/docker-entrypoint.tar.gz /docker-entrypoint.tar.gz
@@ -36,5 +31,3 @@ RUN mkdir /postgresql \
 VOLUME /postgresql
 
 RUN userdel postgres
-
-ENTRYPOINT ["/sbin/tini", "--", "/usr/local/bin/docker-entrypoint.sh"]
