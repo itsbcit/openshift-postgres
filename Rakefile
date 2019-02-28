@@ -1,7 +1,5 @@
 desc "Build all images"
 task :default do
-  sh "curl -O https://raw.githubusercontent.com/docker-library/postgres/master/docker-entrypoint.sh"
-  sh "patch -p0 < docker-entrypoint.sh.patch"
 
   variants = [
     'alpine',
@@ -16,7 +14,6 @@ task :default do
   ]
 
   versions.each do |version|
-    sh "mkdir -p #{version}"
     variants.each do |variant|
       if variant == 'debian' then
         fromvariant = ''
@@ -34,7 +31,4 @@ task :default do
       end
     end
   end
-
-  sh "rm -f Dockerfile"
-  sh "rm -f docker-entrypoint.sh"
 end
