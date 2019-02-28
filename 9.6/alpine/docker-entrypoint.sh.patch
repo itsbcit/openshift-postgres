@@ -1,0 +1,13 @@
+--- docker-entrypoint.sh.orig	2019-02-27 10:57:08.000000000 -0800
++++ docker-entrypoint.sh	2019-02-27 10:58:51.000000000 -0800
+@@ -24,6 +24,10 @@
+ 	unset "$fileVar"
+ }
+ 
++for f in /docker-entrypoint.d/*.sh; do
++    echo "$0: running $f"; . "$f"
++done
++
+ if [ "${1:0:1}" = '-' ]; then
+ 	set -- postgres "$@"
+ fi
