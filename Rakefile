@@ -1,4 +1,4 @@
-desc "Build all images"
+desc "Update Dockerfile templates"
 task :default do
 
   variants = [
