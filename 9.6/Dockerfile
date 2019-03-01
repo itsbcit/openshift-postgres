@@ -7,6 +7,7 @@ ENV PGDATA /postgresql/data
 
 # Add patch
 RUN apt-get update \
+ && apt-get upgrade -y --no-install-recommends \
  && apt-get install -y --no-install-recommends \
     patch \
  && rm -rf /var/lib/apt/lists/*
