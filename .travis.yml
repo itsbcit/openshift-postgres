@@ -19,7 +19,8 @@ env:
   #- VERSION=9.4 VARIANT=alpine
 
 install:
-  - git clone https://github.com/itsbcit/official-images.git ~/official-images
+  - git clone https://github.com/docker-library/official-images.git ~/official-images
+  - patch -p0 -d ~/ < official-images-test.patch
 
 before_script:
   - env | sort
