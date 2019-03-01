@@ -27,6 +27,7 @@ task :default do
       sh "cp -f docker-entrypoint.sh.patch #{version}#{dirvariant}/"
       Dir.chdir("#{version}#{dirvariant}") do
         sh "docker build -t bcit/openshift-postgres:#{version}#{fromvariant} ."
+        sh "docker push bcit/openshift-postgres:#{version}#{fromvariant}"
       end
     end
   end
