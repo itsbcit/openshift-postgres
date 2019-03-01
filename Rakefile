@@ -25,9 +25,9 @@ task :default do
       sh "mkdir -p #{version}#{dirvariant}"
       sh "cat Dockerfile-#{variant}.template | sed -e 's/%%SOURCE-TAG%%/#{version}#{fromvariant}/' > #{version}#{dirvariant}/Dockerfile"
       sh "cp -f docker-entrypoint.sh.patch #{version}#{dirvariant}/"
-      Dir.chdir("#{version}#{dirvariant}") do
-        sh "docker build -t bcit/postgres:#{version}#{fromvariant} ."
-      end
+      # Dir.chdir("#{version}#{dirvariant}") do
+      #   sh "docker build -t bcit/openshift-postgres:#{version}#{fromvariant} ."
+      # end
     end
   end
 end
