@@ -1,4 +1,4 @@
-FROM postgres:%%SOURCE-TAG%%
+FROM postgres:<%= version %>-alpine
 LABEL maintainer="jesse_weisner@bcit.ca"
 
 ENV RUNUSER postgres
