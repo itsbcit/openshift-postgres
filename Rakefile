@@ -13,41 +13,33 @@ end
 desc "Update Dockerfile templates"
 task :default do
 
-  variants = [
-    'alpine',
-  ]
   versions = [
-    '9.4',
-    '9.5',
-    '9.6',
-    '10',
     '11',
+    '10',
+    '9.6',
+    '9.5',
+    '9.4',
   ]
-  patchversion = {
-    '9.4' => '9.4.21',
-    '9.5' => '9.5.16',
-    '9.6' => '9.6.12',
-    '10'  => '10.7',
-    '11'  => '11.2',
+  extratags = {
+    '11'  => ['latest', 'alpine', '11.2',    '11-alpine', '11.2-alpine'],
+    '10'  => [                    '10.7',    '10-alpine', '10.7-alpine'],
+    '9.6' => [               '9',  '9.6.12',  '9-alpine',  '9.6-alpine', '9.6.12-alpine'],
+    '9.5' => [                     '9.5.16',               '9.5-alpine', '9.5.16-alpine'],
+    '9.4' => [                     '9.4.21',               '9.4-alpine', '9.4.21-alpine'],
   }
+  extratags.default = []
 
   versions.each do |version|
-    variants.each do |variant|
-      if variant == 'alpine' then
-        fromvariant = ''
-        dirvariant = ''
-      else
-        fromvariant = "-#{variant}"
-        dirvariant = "/#{variant}"
-      end
-      sh "mkdir -p #{version}#{dirvariant}"
-      sh "cp -f docker-entrypoint.sh.patch #{version}#{dirvariant}/"
-      Dir.chdir("#{version}#{dirvariant}") do
-        sh "docker build -t bcit/openshift-postgres:#{version}#{fromvariant} ."
-        sh "docker tag bcit/openshift-postgres:#{version}#{fromvariant} bcit/openshift-postgres:#{patchversion[version]}#{fromvariant}"
-        sh "docker push bcit/openshift-postgres:#{version}#{fromvariant}"
-        sh "docker push bcit/openshift-postgres:#{patchversion[version]}#{fromvariant}"
+    sh "mkdir -p #{version}"
     render_template("Dockerfile.erb", "#{version}/Dockerfile", binding)
+    sh "cp -f docker-entrypoint.sh.patch #{version}/"
+    Dir.chdir("#{version}") do
+      sh "docker build -t bcit/openshift-postgres:#{version} ."
+      sh "docker push bcit/openshift-postgres:#{version}"
+
+      extratags[version].each do |extratag|
+        sh "docker tag bcit/openshift-postgres:#{version} bcit/openshift-postgres:#{extratag}"
+        sh "docker push bcit/openshift-postgres:#{extratag}"
       end
     end
   end
