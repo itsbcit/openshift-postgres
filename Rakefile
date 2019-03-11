@@ -1,3 +1,15 @@
+require "erb"
+
+# @ripienaar https://www.devco.net/archives/2010/11/18/a_few_rake_tips.php
+# Brilliant.
+def render_template(template, output, scope)
+    tmpl = File.read(template)
+    erb = ERB.new(tmpl, 0, "<>")
+    File.open(output, "w") do |f|
+        f.puts erb.result(scope)
+    end
+end
+
 desc "Update Dockerfile templates"
 task :default do
 
@@ -29,13 +41,13 @@ task :default do
         dirvariant = "/#{variant}"
       end
       sh "mkdir -p #{version}#{dirvariant}"
-      sh "cat Dockerfile-#{variant}.template | sed -e 's/%%SOURCE-TAG%%/#{version}#{fromvariant}/' > #{version}#{dirvariant}/Dockerfile"
       sh "cp -f docker-entrypoint.sh.patch #{version}#{dirvariant}/"
       Dir.chdir("#{version}#{dirvariant}") do
         sh "docker build -t bcit/openshift-postgres:#{version}#{fromvariant} ."
         sh "docker tag bcit/openshift-postgres:#{version}#{fromvariant} bcit/openshift-postgres:#{patchversion[version]}#{fromvariant}"
         sh "docker push bcit/openshift-postgres:#{version}#{fromvariant}"
         sh "docker push bcit/openshift-postgres:#{patchversion[version]}#{fromvariant}"
+    render_template("Dockerfile.erb", "#{version}/Dockerfile", binding)
       end
     end
   end
