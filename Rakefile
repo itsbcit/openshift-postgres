@@ -3,7 +3,6 @@ task :default do
 
   variants = [
     'alpine',
-    'debian',
   ]
   versions = [
     '9.4',
@@ -22,7 +21,7 @@ task :default do
 
   versions.each do |version|
     variants.each do |variant|
-      if variant == 'debian' then
+      if variant == 'alpine' then
         fromvariant = ''
         dirvariant = ''
       else
