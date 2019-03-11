@@ -13,7 +13,7 @@ RUN apt-get update \
  && rm -rf /var/lib/apt/lists/*
 
 # Add docker-entrypoint script base
-ENV DE_VERSION v1.1
+ENV DE_VERSION v1.3
 ADD https://github.com/itsbcit/docker-entrypoint/releases/download/${DE_VERSION}/docker-entrypoint.tar.gz /docker-entrypoint.tar.gz
 RUN tar zxvf docker-entrypoint.tar.gz docker-entrypoint.d && rm -f docker-entrypoint.tar.gz
 
