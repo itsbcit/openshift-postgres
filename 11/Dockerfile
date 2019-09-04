@@ -1,5 +1,6 @@
 FROM postgres:11-alpine
-LABEL maintainer="jesse_weisner@bcit.ca"
+LABEL maintainer="jesse@weisner.ca"
+LABEL build_id="1567622075"
 
 ENV RUNUSER postgres
 ENV HOME /postgresql
@@ -9,17 +10,12 @@ RUN apk add --no-cache \
         patch
 
 # Add docker-entrypoint script base
-ENV DE_VERSION v1.3
-ADD https://github.com/itsbcit/docker-entrypoint/releases/download/${DE_VERSION}/docker-entrypoint.tar.gz /docker-entrypoint.tar.gz
-RUN tar zxvf docker-entrypoint.tar.gz docker-entrypoint.d && rm -f docker-entrypoint.tar.gz
-
-# Apply docker-entrypoint.d patch
-COPY docker-entrypoint.sh.patch /tmp/docker-entrypoint.sh.patch
-RUN patch -p0 /usr/local/bin/docker-entrypoint.sh < /tmp/docker-entrypoint.sh.patch \
- && rm -f /tmp/docker-entrypoint.sh.patch
-
-# Allow resolve-userid.sh script to run
-RUN chmod 664 /etc/passwd /etc/group
+ADD https://github.com/itsbcit/docker-entrypoint/releases/download/v1.5/docker-entrypoint.tar.gz /docker-entrypoint.tar.gz
+RUN tar zxvf docker-entrypoint.tar.gz && rm -f docker-entrypoint.tar.gz \
+ && chmod -R 555 /docker-entrypoint.* \
+ && chmod 664 /etc/passwd /etc/group /etc/shadow \
+ && chown 0:0 /etc/shadow \
+ && chmod 775 /etc
 
 RUN mkdir /postgresql \
  && chown 0:0 /postgresql \

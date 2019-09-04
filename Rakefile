@@ -1,46 +1,61 @@
-require "erb"
+# frozen_string_literal: true
 
-# @ripienaar https://www.devco.net/archives/2010/11/18/a_few_rake_tips.php
-# Brilliant.
-def render_template(template, output, scope)
-    tmpl = File.read(template)
-    erb = ERB.new(tmpl, 0, "<>")
-    File.open(output, "w") do |f|
-        f.puts erb.result(scope)
-    end
+require 'erb'
+require 'fileutils'
+require 'tempfile'
+require 'yaml'
+require 'open-uri'
+
+Dir.glob('lib/*.rb').each { |l| load l unless File.exist?("local/#{l[4..-1]}") } if Dir.exist?('lib')
+Dir.glob('local/*.rb').each { |l| load l } if Dir.exist?('local')
+
+if File.exist?('metadata.yaml')
+  local_metadata = YAML.safe_load(File.read('metadata.yaml'))
+else
+  puts('WARNING: metadata.yaml not found.')
+  local_metadata = {}
 end
 
-desc "Update Dockerfile templates"
-task :default do
+puts('WARNING: Rakefile library not found.') unless File.exist?('lib')
 
-  versions = [
-    '11',
-    '10',
-    '9.6',
-    '9.5',
-    '9.4',
-  ]
-  extratags = {
-    '11'  => ['latest', 'alpine', '11.2',    '11-alpine', '11.2-alpine'],
-    '10'  => [                    '10.7',    '10-alpine', '10.7-alpine'],
-    '9.6' => [               '9',  '9.6.12',  '9-alpine',  '9.6-alpine', '9.6.12-alpine'],
-    '9.5' => [                     '9.5.16',               '9.5-alpine', '9.5.16-alpine'],
-    '9.4' => [                     '9.4.21',               '9.4-alpine', '9.4.21-alpine'],
-  }
-  extratags.default = []
+if File.exist?('lib/metadata-defaults.yaml')
+  default_metadata = YAML.safe_load(File.read('lib/metadata-defaults.yaml'))
+else
+  puts('WARNING: metadata defaults not found.')
+  default_metadata = {}
+end
 
-  versions.each do |version|
-    sh "mkdir -p #{version}"
-    render_template("Dockerfile.erb", "#{version}/Dockerfile", binding)
-    sh "cp -f docker-entrypoint.sh.patch #{version}/"
-    Dir.chdir("#{version}") do
-      sh "docker build -t bcit/openshift-postgres:#{version} ."
-      sh "docker push bcit/openshift-postgres:#{version}"
+$metadata = default_metadata.merge(local_metadata)
 
-      extratags[version].each do |extratag|
-        sh "docker tag bcit/openshift-postgres:#{version} bcit/openshift-postgres:#{extratag}"
-        sh "docker push bcit/openshift-postgres:#{extratag}"
-      end
+if File.exist?('metadata.yaml') && File.exist?('lib')
+  $images = build_objects_array(
+    metadata: $metadata,
+    build_id: build_timestamp
+  )
+end
+
+desc 'Install Rakefile support files'
+task :install do
+  open('https://github.com/itsbcit/docker-rakefile/releases/latest/download/lib.zip') do |archive|
+    FileUtils.remove_entry('lib') if File.exist?('lib')
+    tempfile = Tempfile.new(['lib', '.zip'])
+    File.open(tempfile.path, 'wb') do |f|
+      f.write(archive.read)
+    end
+    system('unzip', tempfile.path)
+    tempfile.unlink
+  end
+end
+
+desc 'Update Rakefile to latest release version'
+task :update do
+  Rake::Task[:install].invoke
+  open('https://github.com/itsbcit/docker-rakefile/releases/latest/download/Rakefile') do |rakefile|
+    File.open('Rakefile', 'wb') do |f|
+      f.write(rakefile.read)
     end
   end
 end
+
+Dir.glob('lib/tasks/*.rake').each { |l| load l unless File.exist?("local/tasks/#{l[10..-1]}") } if Dir.exist?('lib/tasks')
+Dir.glob('local/tasks/*.rake').each { |l| load l } if Dir.exist?('local/tasks')

@@ -1,0 +1,14 @@
+---
+image_name: openshift-postgres
+labels:
+  maintainer: "jesse@weisner.ca"
+versions:
+  '9.4':
+  '9.5':
+  '9.6':
+  '10':
+  '11':
+    version_tags:
+      - latest
+files:
+  - 'docker-entrypoint.sh.patch'
